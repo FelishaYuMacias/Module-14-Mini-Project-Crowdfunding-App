@@ -11,7 +11,9 @@ const PORT = process.env.PORT || 3001;
 
 const sess = {
   secret: process.env.SESSION_SECRET,
-  cookie: {},
+  cookie: {
+    maxAge:1000*60*60*2
+  },
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
@@ -19,8 +21,10 @@ const sess = {
   })
 };
 
+app.use(express.static("public"))
+
 const hbs = exphbs.create({});
-app.engine('handlebars',hbs.engine);
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.use(session(sess));
@@ -31,5 +35,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
 sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log(`Now listening on PORT ${PORT}`));
 });
